@@ -3,37 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GeoGebra 固定範囲・スマホ縦長</title>
+<title>GeoGebra 固定範囲（縦長）</title>
 
 <style>
-  /* 画面をフルで使うレイアウト */
+  /* 画面全体を使うが余白ゼロに */
   html,body{margin:0;height:100%;}
-  /* 縦長コンテナ：幅100%・高さ90%・中央寄せ   */
-  #ggb-box{
-    width:100%;
-    height:90vh;
-    max-height:900px;      /* 好みで上限 */
-    margin:0 auto;
-  }
+
+  /* 埋め込みボックス：幅100 %。
+     高さは JS で (幅×1.866…) に毎回更新 */
+  #ggb-box{width:100%;}
 </style>
 
-<!-- ggbOnInit を先に宣言 -->
+<!-- ggbOnInit を **先に** 宣言しておく -->
 <script>
-  let ggbApplet;
-  const X_MIN = -0.5, X_MAX = 7,  Y_MIN = -7, Y_MAX = 7;
-  const RATIO  = (Y_MAX - Y_MIN) / (X_MAX - X_MIN);   // ≒1.867
+  let ggbApplet;                        // 後で使う
+  const X_MIN = -0.5, X_MAX = 7;
+  const Y_MIN = -7  , Y_MAX = 7;
+  const RATIO = (Y_MAX-Y_MIN)/(X_MAX-X_MIN);   // ≒1.8667
 
+  /* ----------------------------------------
+       ビューをロックする関数（比率も固定）
+     ----------------------------------------*/
   function lockView(){
     ggbApplet.setCoordSystem(X_MIN, X_MAX, Y_MIN, Y_MAX);
-    /* setAxesRatio(view, ratioX : ratioY)  第1引数 1 → 1番ビュー */
-    ggbApplet.setAxesRatio(1, 1, RATIO);
+    /* setAxesRatio の正しいシグネチャは (xScale , yScale) → 2 引数 :contentReference[oaicite:0]{index=0} */
+    ggbApplet.setAxesRatio(1, RATIO);
   }
 
-  /* GeoGebra 本体起動後に呼ばれるコールバック */
+  /* GeoGebra 本体ロード完了後に呼ばれる */
   function ggbOnInit(){
-    lockView();          // ① 即座にロック
-    setTimeout(lockView, 250); // ② 自動リサイズ終了後にもう一度ロック
+    lockView();          // ① 直後
+    setTimeout(lockView,250); // ② 自動補正が終わる頃にもう一度
   }
+
+  /* 画面リサイズ時に高さを再計算 */
+  function resizeBox(){
+    const box=document.getElementById('ggb-box');
+    box.style.height = (box.offsetWidth * RATIO) + 'px';
+  }
+  window.addEventListener('resize', resizeBox);
 </script>
 
 <!-- GeoGebra JS API -->
@@ -41,12 +49,13 @@
 </head>
 <body>
 
+<!-- 埋め込みコンテナ -->
 <div id="ggb-box"></div>
 
 <script>
-  /* GGBApplet を生成（true で ggbOnInit 有効）*/
+  /* GGBApplet 生成。useBrowserForJS=true で ggbOnInit 有効  */
   ggbApplet = new GGBApplet({
-    material_id: "nkk867we",     // ← ご自身の ID に
+    material_id: "nkk867we",   // ← あなたの素材 ID
     showToolBar:false,
     showMenuBar:false,
     showAlgebraInput:false,
@@ -55,9 +64,10 @@
     showZoomButtons:false
   }, true);
 
-  /* ページロード後に埋め込み */
-  window.addEventListener("load", () => {
-    ggbApplet.inject("ggb-box");
+  /* ページ読み込み完了 → 高さ計算 → inject */
+  window.addEventListener('load', () =>{
+    resizeBox();                       // 高さを最初に設定
+    ggbApplet.inject("ggb-box");       // 埋め込み
   });
 </script>
 
