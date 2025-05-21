@@ -14,10 +14,10 @@
   </style>
 </head>
 <body>
-  <h1>Lights Out 3×3</h1>
+  <h1>ライツアウト 3×3</h1>
   <table id="grid"></table>
-  <div id="moves">Moves: 0</div>
-  <button id="reset">Reset</button>
+  <div id="moves">タップした回数: 0</div>
+  <button id="reset">リセット</button>
   <script>
     const initialState = [
       [1,0,0],
@@ -56,7 +56,7 @@
       });
       render();
       if (state.flat().every(v=>v===0)) {
-        setTimeout(()=>alert('You won in '+moves+' moves!'),100);
+        setTimeout(()=>alert(''+moves+' 手順でクリア！'),100);
       }
     }
 
