@@ -3,32 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GeoGebra 範囲固定・縦長サンプル</title>
+<title>GeoGebra 固定範囲・スマホ縦長</title>
 
-<!-- スタイル：スマホでも縦長でフィットさせる -->
 <style>
+  /* 画面をフルで使うレイアウト */
   html,body{margin:0;height:100%;}
-  #ggb-container{
+  /* 縦長コンテナ：幅100%・高さ90%・中央寄せ   */
+  #ggb-box{
     width:100%;
-    /* 画面を縦長に使いたい場合はアスペクト比を大きくする */
-    aspect-ratio: 9 / 16;   /* 幅 : 高さ ＝ 9 : 16 */
-    max-height:90vh;        /* 画面高の 90% まで */
+    height:90vh;
+    max-height:900px;      /* 好みで上限 */
     margin:0 auto;
   }
 </style>
 
-<!-- ggbOnInit を **先に** 宣言 -->
+<!-- ggbOnInit を先に宣言 -->
 <script>
-  let ggbApplet;                       // 後で使うために外へ出す
-  function fixView() {
-    // -0.5 ≤ x ≤ 7,  -7 ≤ y ≤ 7
-    ggbApplet.setCoordSystem(-0.5, 7, -7, 7);
+  let ggbApplet;
+  const X_MIN = -0.5, X_MAX = 7,  Y_MIN = -7, Y_MAX = 7;
+  const RATIO  = (Y_MAX - Y_MIN) / (X_MAX - X_MIN);   // ≒1.867
+
+  function lockView(){
+    ggbApplet.setCoordSystem(X_MIN, X_MAX, Y_MIN, Y_MAX);
+    /* setAxesRatio(view, ratioX : ratioY)  第1引数 1 → 1番ビュー */
+    ggbApplet.setAxesRatio(1, 1, RATIO);
   }
-  function ggbOnInit() {
-    /* 初期化直後に一度 */
-    fixView();
-    /* GeoGebra の自動ズームが終わった後にもう一度 */
-    setTimeout(fixView, 200);
+
+  /* GeoGebra 本体起動後に呼ばれるコールバック */
+  function ggbOnInit(){
+    lockView();          // ① 即座にロック
+    setTimeout(lockView, 250); // ② 自動リサイズ終了後にもう一度ロック
   }
 </script>
 
@@ -37,22 +41,23 @@
 </head>
 <body>
 
-<div id="ggb-container"></div>
+<div id="ggb-box"></div>
 
 <script>
-  /* GGBApplet インスタンスを作成（第2引数 true で ggbOnInit が有効） */
+  /* GGBApplet を生成（true で ggbOnInit 有効）*/
   ggbApplet = new GGBApplet({
-      material_id: "nkk867we",   // ← あなたの素材 ID
-      showToolBar: false,
-      showMenuBar: false,
-      showAlgebraInput: false,
-      enableRightClick: false,
-      enableShiftDragZoom: false
-  }, /* useBrowserForJS */ true);
+    material_id: "nkk867we",     // ← ご自身の ID に
+    showToolBar:false,
+    showMenuBar:false,
+    showAlgebraInput:false,
+    enableRightClick:false,
+    enableShiftDragZoom:false,
+    showZoomButtons:false
+  }, true);
 
-  /* ページロード完了で埋め込む */
+  /* ページロード後に埋め込み */
   window.addEventListener("load", () => {
-    ggbApplet.inject("ggb-container");
+    ggbApplet.inject("ggb-box");
   });
 </script>
 
