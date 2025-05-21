@@ -1,59 +1,60 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoGebra 固定範囲サンプル</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
-    /* 埋め込み要素を縦長に */
-    #ggb-element {
-      width: 100%;
-      height: 90vh;         /* ビューポート高さの90% */
-      max-height: 800px;    /* 必要に応じて上限を */
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GeoGebra 範囲固定・縦長サンプル</title>
 
-  <!-- ① ggbOnInit を先に定義しておく -->
-  <script>
-    // GGBApplet インスタンス (下で inject)
-    var ggbApplet;
+<!-- スタイル：スマホでも縦長でフィットさせる -->
+<style>
+  html,body{margin:0;height:100%;}
+  #ggb-container{
+    width:100%;
+    /* 画面を縦長に使いたい場合はアスペクト比を大きくする */
+    aspect-ratio: 9 / 16;   /* 幅 : 高さ ＝ 9 : 16 */
+    max-height:90vh;        /* 画面高の 90% まで */
+    margin:0 auto;
+  }
+</style>
 
-    // GeoGebra 本体の初期化完了後に呼ばれる
-    function ggbOnInit() {
-      // setCoordSystem(xMin, xMax, yMin, yMax)
-      ggbApplet.setCoordSystem(-0.5, 7, -7, 7);
-    }
-  </script>
+<!-- ggbOnInit を **先に** 宣言 -->
+<script>
+  let ggbApplet;                       // 後で使うために外へ出す
+  function fixView() {
+    // -0.5 ≤ x ≤ 7,  -7 ≤ y ≤ 7
+    ggbApplet.setCoordSystem(-0.5, 7, -7, 7);
+  }
+  function ggbOnInit() {
+    /* 初期化直後に一度 */
+    fixView();
+    /* GeoGebra の自動ズームが終わった後にもう一度 */
+    setTimeout(fixView, 200);
+  }
+</script>
 
-  <!-- ② GeoGebra JS API -->
-  <script src="https://www.geogebra.org/apps/deployggb.js"></script>
+<!-- GeoGebra JS API -->
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
 </head>
 <body>
 
-  <!-- 埋め込み先 -->
-  <div id="ggb-element"></div>
+<div id="ggb-container"></div>
 
-  <script>
-    // ③ GGBApplet の生成（true を渡すと ggbOnInit が使われる）
-    ggbApplet = new GGBApplet({
-      material_id: "nkk867we",   // ← あなたの素材IDに置き換え
+<script>
+  /* GGBApplet インスタンスを作成（第2引数 true で ggbOnInit が有効） */
+  ggbApplet = new GGBApplet({
+      material_id: "nkk867we",   // ← あなたの素材 ID
       showToolBar: false,
       showMenuBar: false,
       showAlgebraInput: false,
       enableRightClick: false,
       enableShiftDragZoom: false
-    }, true);
+  }, /* useBrowserForJS */ true);
 
-    // ④ ページ load で inject
-    window.addEventListener("load", function() {
-      ggbApplet.inject("ggb-element");
-    });
-  </script>
+  /* ページロード完了で埋め込む */
+  window.addEventListener("load", () => {
+    ggbApplet.inject("ggb-container");
+  });
+</script>
 
 </body>
 </html>
