@@ -27,24 +27,27 @@
   <!-- GeoGebra 埋め込み先 -->
   <div id="ggb-element"></div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // GeoGebra アプレット設定
-      const params = {
+<script>
+    // → グローバル変数にしておく
+    var ggbApplet = new GGBApplet({
         material_id: "nkk867we",       // ← ここを自分のIDに置き換え
         showToolBar: false,            // ツールバー非表示
         showMenuBar: false,            // メニューバー非表示
         showAlgebraInput: false,       // 入力バー非表示
         enableRightClick: false,       // 右クリック無効（パン操作も不可）
         enableShiftDragZoom: false     // Shift+ドラッグズーム無効
-      };
-      // インスタンス作成
-      const applet = new GGBApplet(params, true);
-      // 埋め込み
-      applet.inject("ggb-element");
-      // 座標範囲を固定： setCoordSystem(xMin, xMax, yMin, yMax)
-      applet.setCoordSystem(-0.5, 7, -0.5, 7);
+    }, true);
+
+    // ページ読み込み後に埋め込み
+    window.addEventListener("load", function() {
+      ggbApplet.inject("ggb-element");
     });
+
+    // GeoGebra 本体の初期化が終わった後に呼ばれる
+    function ggbOnInit() {
+      // ← ここで確実に範囲を固定！
+      ggbApplet.setCoordSystem(-0.5, 7, -0.5, 7);
+    }
   </script>
 
 </body>
