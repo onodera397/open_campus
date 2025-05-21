@@ -3,51 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GeoGebra 埋め込みサンプル</title>
-  <!-- GeoGebra JS API 読み込み -->
-  <script src="https://www.geogebra.org/apps/deployggb.js"></script>
-
+  <title>GeoGebra 固定範囲サンプル</title>
   <style>
-    /* ページ余白リセット */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
     }
-    /* 埋め込み先のサイズ調整 */
+    /* 埋め込み要素を縦長に */
     #ggb-element {
-      width: 100%;      /* 横幅いっぱい */
-      height: 80vh;     /* ビューポート高さの80% */
-      /* 必要なら max-width: 800px; margin: auto; などで中央寄せも可能 */
+      width: 100%;
+      height: 90vh;         /* ビューポート高さの90% */
+      max-height: 800px;    /* 必要に応じて上限を */
     }
   </style>
+
+  <!-- ① ggbOnInit を先に定義しておく -->
+  <script>
+    // GGBApplet インスタンス (下で inject)
+    var ggbApplet;
+
+    // GeoGebra 本体の初期化完了後に呼ばれる
+    function ggbOnInit() {
+      // setCoordSystem(xMin, xMax, yMin, yMax)
+      ggbApplet.setCoordSystem(-0.5, 7, -7, 7);
+    }
+  </script>
+
+  <!-- ② GeoGebra JS API -->
+  <script src="https://www.geogebra.org/apps/deployggb.js"></script>
 </head>
 <body>
 
-  <!-- GeoGebra 埋め込み先 -->
+  <!-- 埋め込み先 -->
   <div id="ggb-element"></div>
 
-<script>
-    // → グローバル変数にしておく
-    var ggbApplet = new GGBApplet({
-        material_id: "nkk867we",       // ← ここを自分のIDに置き換え
-        showToolBar: false,            // ツールバー非表示
-        showMenuBar: false,            // メニューバー非表示
-        showAlgebraInput: false,       // 入力バー非表示
-        enableRightClick: false,       // 右クリック無効（パン操作も不可）
-        enableShiftDragZoom: false     // Shift+ドラッグズーム無効
+  <script>
+    // ③ GGBApplet の生成（true を渡すと ggbOnInit が使われる）
+    ggbApplet = new GGBApplet({
+      material_id: "nkk867we",   // ← あなたの素材IDに置き換え
+      showToolBar: false,
+      showMenuBar: false,
+      showAlgebraInput: false,
+      enableRightClick: false,
+      enableShiftDragZoom: false
     }, true);
 
-    // ページ読み込み後に埋め込み
+    // ④ ページ load で inject
     window.addEventListener("load", function() {
       ggbApplet.inject("ggb-element");
     });
-
-    // GeoGebra 本体の初期化が終わった後に呼ばれる
-    function ggbOnInit() {
-      // ← ここで確実に範囲を固定！
-      ggbApplet.setCoordSystem(-0.5, 7, -7, 7);
-    }
   </script>
 
 </body>
