@@ -3,19 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GeoGebra シンプル埋め込み</title>
+<title>GeoGebra – 縦長レスポンシブ最小コード</title>
 
 <style>
   html,body{margin:0;height:100%}
 
-  /* 画面幅 : 高さ ＝ 7.5 : 14 なので aspect-ratio = 幅/高さ ≒ 0.5357 */
+  /* ▼ 14 : 7.5 → 幅 / 高さ ≒ 0.5357 */
   .ggb-wrap{
     width:100%;
-    aspect-ratio:7.5/14;
+    aspect-ratio:7.5/14;   /* 新しめのブラウザ用 */
     position:relative;
   }
 
-  /* aspect-ratio 未対応ブラウザ用フォールバック */
+  /* ▲が効かない旧ブラウザ向けフォールバック */
   @supports not (aspect-ratio: 1/1){
     .ggb-wrap{padding-top:186.7%;height:0}
     .ggb-wrap iframe{position:absolute;inset:0}
