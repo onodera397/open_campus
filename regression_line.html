@@ -1,75 +1,51 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GeoGebra 固定範囲（縦長）</title>
-
-<style>
-  /* 画面全体を使うが余白ゼロに */
-  html,body{margin:0;height:100%;}
-
-  /* 埋め込みボックス：幅100 %。
-     高さは JS で (幅×1.866…) に毎回更新 */
-  #ggb-box{width:100%;}
-</style>
-
-<!-- ggbOnInit を **先に** 宣言しておく -->
-<script>
-  let ggbApplet;                        // 後で使う
-  const X_MIN = -0.5, X_MAX = 7;
-  const Y_MIN = -7  , Y_MAX = 7;
-  const RATIO = (Y_MAX-Y_MIN)/(X_MAX-X_MIN);   // ≒1.8667
-
-  /* ----------------------------------------
-       ビューをロックする関数（比率も固定）
-     ----------------------------------------*/
-  function lockView(){
-    ggbApplet.setCoordSystem(X_MIN, X_MAX, Y_MIN, Y_MAX);
-    /* setAxesRatio の正しいシグネチャは (xScale , yScale) → 2 引数 :contentReference[oaicite:0]{index=0} */
-    ggbApplet.setAxesRatio(1, RATIO);
-  }
-
-  /* GeoGebra 本体ロード完了後に呼ばれる */
-  function ggbOnInit(){
-    lockView();          // ① 直後
-    setTimeout(lockView,250); // ② 自動補正が終わる頃にもう一度
-  }
-
-  /* 画面リサイズ時に高さを再計算 */
-  function resizeBox(){
-    const box=document.getElementById('ggb-box');
-    box.style.height = (box.offsetWidth * RATIO) + 'px';
-  }
-  window.addEventListener('resize', resizeBox);
-</script>
-
-<!-- GeoGebra JS API -->
-<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GeoGebra レスポンシブ埋め込み</title>
+  <style>
+    /* 横幅 100% で、縦横比を padding-top で保つ */
+    .ggb-wrap {
+      position: relative;
+      width: 100%;
+      /* padding-top に縦横比 × 100％を指定
+         例：y幅14 ÷ x幅7.5 ≒ 1.867 → 186.7% */
+      padding-top: 186.7%;
+      overflow: hidden;
+    }
+    .ggb-wrap iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
 <body>
 
-<!-- 埋め込みコンテナ -->
-<div id="ggb-box"></div>
-
-<script>
-  /* GGBApplet 生成。useBrowserForJS=true で ggbOnInit 有効  */
-  ggbApplet = new GGBApplet({
-    material_id: "nkk867we",   // ← あなたの素材 ID
-    showToolBar:false,
-    showMenuBar:false,
-    showAlgebraInput:false,
-    enableRightClick:false,
-    enableShiftDragZoom:false,
-    showZoomButtons:false
-  }, true);
-
-  /* ページ読み込み完了 → 高さ計算 → inject */
-  window.addEventListener('load', () =>{
-    resizeBox();                       // 高さを最初に設定
-    ggbApplet.inject("ggb-box");       // 埋め込み
-  });
-</script>
+  <div class="ggb-wrap">
+    <iframe
+      scrolling="no"
+      title="regression_line"
+      src="https://www.geogebra.org/material/iframe/id/nkk867we
+           /width/1817
+           /height/830
+           /border/888888
+           /sfsb/false   <!-- 全画面ボタン非表示 -->
+           /smb/false    <!-- メニューバー非表示 -->
+           /stb/false    <!-- ツールバー非表示 -->
+           /stbh/false   <!-- ツールバーヘルプ非表示 -->
+           /ai/false     <!-- 入力バー非表示 -->
+           /asb/false    <!-- 代数ビュー非表示 -->
+           /sri/false    <!-- リセットアイコン非表示 -->
+           /rc/false     <!-- 右クリックメニュー無効 -->
+           /ld/false     <!-- ラベルドラッグ無効 -->
+           /sdz/false    <!-- Shift+ドラッグズーム無効 -->
+           /ctl/false"   <!-- 再生ボタン非表示 -->
+    ></iframe>
+  </div>
 
 </body>
 </html>
