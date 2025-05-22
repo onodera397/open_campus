@@ -3,40 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GeoGebra – 縦長レスポンシブ最小コード</title>
+<title>GeoGebra 固定範囲（縦長）</title>
 
 <style>
-  html,body{margin:0;height:100%}
+  /* 画面全体を使うが余白ゼロに */
+  html,body{margin:0;height:100%;}
 
-  /* ▼ 14 : 7.5 → 幅 / 高さ ≒ 0.5357 */
-  .ggb-wrap{
-    width:100%;
-    aspect-ratio:7.5/14;   /* 新しめのブラウザ用 */
-    position:relative;
-  }
-
-  /* ▲が効かない旧ブラウザ向けフォールバック */
-  @supports not (aspect-ratio: 1/1){
-    .ggb-wrap{padding-top:186.7%;height:0}
-    .ggb-wrap iframe{position:absolute;inset:0}
-  }
-
-  .ggb-wrap iframe{
-    width:100%;
-    height:100%;
-    border:none;
-  }
+  /* 埋め込みボックス：幅100 %。
+     高さは JS で (幅×1.866…) に毎回更新 */
+  #ggb-box{width:100%;}
 </style>
+
+<!-- ggbOnInit を **先に** 宣言しておく -->
+<script>
+  let ggbApplet;                        // 後で使う
+  const X_MIN = -0.5, X_MAX = 7;
+  const Y_MIN = -7  , Y_MAX = 7;
+  const RATIO = (Y_MAX-Y_MIN)/(X_MAX-X_MIN);   // ≒1.8667
+
+  /* ----------------------------------------
+       ビューをロックする関数（比率も固定）
+     ----------------------------------------*/
+  function lockView(){
+    ggbApplet.setCoordSystem(X_MIN, X_MAX, Y_MIN, Y_MAX);
+    /* setAxesRatio の正しいシグネチャは (xScale , yScale) → 2 引数 :contentReference[oaicite:0]{index=0} */
+    ggbApplet.setAxesRatio(1, RATIO);
+  }
+
+  /* GeoGebra 本体ロード完了後に呼ばれる */
+  function ggbOnInit(){
+    lockView();          // ① 直後
+    setTimeout(lockView,250); // ② 自動補正が終わる頃にもう一度
+  }
+
+  /* 画面リサイズ時に高さを再計算 */
+  function resizeBox(){
+    const box=document.getElementById('ggb-box');
+    box.style.height = (box.offsetWidth * RATIO) + 'px';
+  }
+  window.addEventListener('resize', resizeBox);
+</script>
+
+<!-- GeoGebra JS API -->
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
 </head>
 <body>
 
-  <div class="ggb-wrap">
-    <iframe
-      title="GeoGebra Material"
-      scrolling="no"
-      src="https://www.geogebra.org/material/iframe/id/nkk867we/width/800/height/1493/border/0/ai/false/smb/false/stb/false/stbh/false/rc/false/sdz/false/ld/false/sri/false/szb/false">
-    </iframe>
-  </div>
+<!-- 埋め込みコンテナ -->
+<div id="ggb-box"></div>
+
+<script>
+  /* GGBApplet 生成。useBrowserForJS=true で ggbOnInit 有効  */
+  ggbApplet = new GGBApplet({
+    material_id: "nkk867we",   // ← あなたの素材 ID
+    showToolBar:false,
+    showMenuBar:false,
+    showAlgebraInput:false,
+    enableRightClick:false,
+    enableShiftDragZoom:false,
+    showZoomButtons:false
+  }, true);
+
+  /* ページ読み込み完了 → 高さ計算 → inject */
+  window.addEventListener('load', () =>{
+    resizeBox();                       // 高さを最初に設定
+    ggbApplet.inject("ggb-box");       // 埋め込み
+  });
+</script>
 
 </body>
 </html>
