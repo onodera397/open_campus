@@ -1,50 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GeoGebra レスポンシブ埋め込み</title>
-  <style>
-    /* 横幅 100% で、縦横比を padding-top で保つ */
-    .ggb-wrap {
-      position: relative;
-      width: 100%;
-      /* padding-top に縦横比 × 100％を指定
-         例：y幅14 ÷ x幅7.5 ≒ 1.867 → 186.7% */
-      padding-top: 186.7%;
-      overflow: hidden;
-    }
-    .ggb-wrap iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GeoGebra シンプル埋め込み（縦長）</title>
+
+<style>
+  html, body { margin: 0; height: 100%; }
+
+  /* ▼ 幅 : 高さ ＝ 7.5 : 14  →  aspect-ratio は「幅 ÷ 高さ」なので 7.5/14 ≒ 0.5357 */
+  .ggb-wrap {
+    width: 100%;          /* 画面幅いっぱい */
+    aspect-ratio: 7.5 / 14;
+    /* 旧ブラウザ用フォールバックが欲しければ
+       padding-top: 186.7%; height: 0; を併記しても OK */
+  }
+
+  .ggb-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
 </head>
 <body>
 
   <div class="ggb-wrap">
     <iframe
+      title="GeoGebra Material"
       scrolling="no"
-      title="regression_line"
       src="https://www.geogebra.org/material/iframe/id/nkk867we
-           /width/1817
-           /height/830
-           /border/888888
-           /sfsb/false   <!-- 全画面ボタン非表示 -->
-           /smb/false    <!-- メニューバー非表示 -->
-           /stb/false    <!-- ツールバー非表示 -->
-           /stbh/false   <!-- ツールバーヘルプ非表示 -->
-           /ai/false     <!-- 入力バー非表示 -->
-           /asb/false    <!-- 代数ビュー非表示 -->
-           /sri/false    <!-- リセットアイコン非表示 -->
-           /rc/false     <!-- 右クリックメニュー無効 -->
-           /ld/false     <!-- ラベルドラッグ無効 -->
-           /sdz/false    <!-- Shift+ドラッグズーム無効 -->
-           /ctl/false"   <!-- 再生ボタン非表示 -->
-    ></iframe>
+           /ai/false        <!-- 入力バー非表示 -->
+           /smb/false       <!-- メニューバー非表示 -->
+           /stb/false       <!-- ツールバー非表示 -->
+           /stbh/false      <!-- ヘルプボタン非表示 -->
+           /rc/false        <!-- 右クリック無効 -->
+           /sdz/false       <!-- Shift+ドラッグズーム無効 -->
+           /ld/false        <!-- ラベルドラッグ無効 -->
+           /sri/false       <!-- リセットアイコン非表示 -->
+           /szb/false       <!-- ズームボタン非表示 -->
+           /border/0">
+    </iframe>
   </div>
 
 </body>
