@@ -1,35 +1,7 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GeoGebra シンプル埋め込み</title>
-  <style>
-    /* 縦横比 = (y 範囲) ÷ (x 範囲) = 14 ÷ 7.5 ≒ 1.8667 */
-    .ggb-container {
-      position: relative;
-      width: 100%;
-      /* padding-top に 縦横比 × 100% を指定 */
-      padding-top: 186.67%;
-      overflow: hidden;
-    }
-    .ggb-container iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-
-  <div class="ggb-container">
-    <iframe 
-      scrolling="no"
-      src="https://www.geogebra.org/material/iframe/id/nkk867we/width/1000/height/1867/border/0/ai/false/smb/false/stb/false">
-    </iframe>
-  </div>
-
-</body>
-</html>
+<div style="position:relative;padding-top:75%;height:0;">
+  <iframe scrolling="no"
+          title="regression_line"
+          src="https://www.geogebra.org/material/iframe/id/nkk867we?ai=true&menuBar=false&toolBar=false&inputBar=false"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;">
+  </iframe>
+</div>
