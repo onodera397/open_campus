@@ -10,14 +10,16 @@
     td { width: 60px; height: 60px; border: 2px solid #333; cursor: pointer; }
     .on  { background: yellow; }
     .off { background: #555; }
-    #moves { margin: 20px; font-size: 1.2em; }
+    #moves, #clearTime { margin: 12px; font-size: 1.2em; }
     button { margin: 10px; padding: 10px 20px; }
   </style>
 </head>
 <body>
   <h1>ライツアウト 3×3</h1>
+
   <table id="grid"></table>
   <div id="moves">タップした回数 : 0</div>
+  <div id="clearTime">クリア時間 : --.- 秒</div>   <!-- ★ 追加 ★ -->
   <button id="reset">リセット</button>
 
   <script>
@@ -27,12 +29,12 @@
       [0,1,0]
     ];
 
-    let state, moves, startTime = null;   // ① 追加
+    let state, moves, startTime = null;
 
     function init() {
       state = initialState.map(r => r.slice());
       moves = 0;
-      startTime = null;                   // ゲームをリセットしたら時間もリセット
+      /* startTime と clearTime 表示は残しておく */
       render();
     }
 
@@ -53,7 +55,7 @@
     }
 
     function toggle(i,j) {
-      if (moves === 0) startTime = Date.now();   // ② 追加
+      if (moves === 0 && startTime === null) startTime = Date.now();  // 最初のタップで開始
 
       moves++;
       [[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([di,dj]) => {
@@ -62,9 +64,11 @@
       });
       render();
 
-      if (state.flat().every(v=>v === 0)) {
-        const sec = ((Date.now() - startTime) / 1000).toFixed(1);   // ③ 追加
+      if (state.flat().every(v => v === 0)) {
+        const sec = ((Date.now() - startTime) / 1000).toFixed(1);        // 経過秒
+        document.getElementById('clearTime').textContent = 'クリア時間 : ' + sec + ' 秒'; // ★ 更新 ★
         setTimeout(() => alert(`${moves} 回のタップでクリア！\nクリア時間 : ${sec} 秒`), 100);
+        startTime = null;   // タイマーだけリセット。表示は残る
       }
     }
 
