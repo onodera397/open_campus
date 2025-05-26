@@ -8,7 +8,7 @@
     body { font-family: sans-serif; text-align: center; margin-top: 50px; }
     table { margin: auto; border-collapse: collapse; }
     td { width: 60px; height: 60px; border: 2px solid #333; cursor: pointer; }
-    .on { background: yellow; }
+    .on  { background: yellow; }
     .off { background: #555; }
     #moves { margin: 20px; font-size: 1.2em; }
     button { margin: 10px; padding: 10px 20px; }
@@ -17,19 +17,22 @@
 <body>
   <h1>ライツアウト 3×3</h1>
   <table id="grid"></table>
-  <div id="moves">タップした回数: 0</div>
+  <div id="moves">タップした回数 : 0</div>
   <button id="reset">リセット</button>
+
   <script>
     const initialState = [
       [1,0,0],
       [0,0,1],
       [0,1,0]
     ];
-    let state, moves;
+
+    let state, moves, startTime = null;   // ① 追加
 
     function init() {
-      state = initialState.map(row => row.slice());
+      state = initialState.map(r => r.slice());
       moves = 0;
+      startTime = null;                   // ゲームをリセットしたら時間もリセット
       render();
     }
 
@@ -50,14 +53,18 @@
     }
 
     function toggle(i,j) {
+      if (moves === 0) startTime = Date.now();   // ② 追加
+
       moves++;
       [[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([di,dj]) => {
-        const ni = i+di, nj = j+dj;
+        const ni = i + di, nj = j + dj;
         if (ni>=0 && ni<3 && nj>=0 && nj<3) state[ni][nj] ^= 1;
       });
       render();
-      if (state.flat().every(v=>v===0)) {
-        setTimeout(()=>alert(''+moves+' 回のタップでクリア！'),100);
+
+      if (state.flat().every(v=>v === 0)) {
+        const sec = ((Date.now() - startTime) / 1000).toFixed(1);   // ③ 追加
+        setTimeout(() => alert(`${moves} 回のタップでクリア！\nクリア時間 : ${sec} 秒`), 100);
       }
     }
 
