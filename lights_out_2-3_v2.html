@@ -20,7 +20,7 @@
 </head>
 <body>
   <h1>ライツアウト（上級？）</h1>
-  <div id="timer">残り時間: 1:00</div>
+  <div id="timer">残り時間: 00:30</div>
   <table id="grid"></table>
   <div id="moves">タップした回数: 0</div>
   <button id="reset">リセット</button>
@@ -30,7 +30,7 @@
       [0,0,0]
     ];
     let state, moves;
-    let secondsRemaining = 60;
+    let secondsRemaining = 30;
     let timerInterval = null;
     let gameActive = true;
     let timerStarted = false;
@@ -41,7 +41,7 @@
       gameActive = true;
       timerStarted = false;
       clearInterval(timerInterval);
-      secondsRemaining = 60;
+      secondsRemaining = 30;
       updateTimerDisplay();
       render();
     }
