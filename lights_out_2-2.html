@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lights Out 2×2</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    table { margin: auto; border-collapse: collapse; }
+    td { width: 60px; height: 60px; border: 2px solid #333; cursor: pointer; }
+    .on { background: yellow; }
+    .off { background: #555; }
+    #moves { margin: 20px; font-size: 1.2em; }
+    button { margin: 10px; padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>ライツアウト（初級）</h1>
+  <table id="grid"></table>
+  <div id="moves">タップした回数: 0</div>
+  <button id="reset">リセット</button>
+  <script>
+    const initialState = [
+      [1,1],
+      [0,0]
+    ];
+    let state, moves;
+
+    function init() {
+      state = initialState.map(row => row.slice());
+      moves = 0;
+      render();
+    }
+
+    function render() {
+      const table = document.getElementById('grid');
+      table.innerHTML = '';
+      for (let i = 0; i < 2; i++) {
+        const tr = document.createElement('tr');
+        for (let j = 0; j < 2; j++) {
+          const td = document.createElement('td');
+          td.className = state[i][j] ? 'on' : 'off';
+          td.addEventListener('click', () => toggle(i,j));
+          tr.appendChild(td);
+        }
+        table.appendChild(tr);
+      }
+      document.getElementById('moves').textContent = 'タップした回数 : ' + moves;
+    }
+
+    function toggle(i,j) {
+      moves++;
+      [[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([di,dj]) => {
+        const ni = i+di, nj = j+dj;
+        if (ni>=0 && ni<2 && nj>=0 && nj<2) state[ni][nj] ^= 1;
+      });
+      render();
+      if (state.flat().every(v=>v===0)) {
+        setTimeout(()=>alert(''+moves+' 回のタップでクリア！'),100);
+      }
+    }
+
+    document.getElementById('reset').addEventListener('click', init);
+
+    // 初期化
+    init();
+  </script>
+</body>
+</html>
