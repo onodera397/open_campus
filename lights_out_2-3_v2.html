@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lights Out 2×3</title>
+  <title>ライツアウト（上級？）</title>
   <style>
     body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    #timer { font-size: 1.2rem; margin-bottom: 10px; }
     table { margin: auto; border-collapse: collapse; }
     td { width: 60px; height: 60px; border: 2px solid #333; cursor: pointer; }
     .on { background: yellow; }
     .off { background: #555; }
     #moves { margin: 20px; font-size: 1.2em; }
     button { margin: 10px; padding: 10px 20px; }
+    .back-link { margin-top: 20px; }
+    .back-link a { text-decoration: none; color: #008cff; }
+    .back-link a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
-  <h1>ライツアウト（中級）</h1>
+  <h1>ライツアウト（上級？）</h1>
+  <div id="timer">残り時間: 1:00</div>
   <table id="grid"></table>
   <div id="moves">タップした回数: 0</div>
   <button id="reset">リセット</button>
@@ -25,10 +30,19 @@
       [0,0,0]
     ];
     let state, moves;
+    let secondsRemaining = 60;
+    let timerInterval = null;
+    let gameActive = true;
+    let timerStarted = false;
 
     function init() {
       state = initialState.map(row => row.slice());
       moves = 0;
+      gameActive = true;
+      timerStarted = false;
+      clearInterval(timerInterval);
+      secondsRemaining = 60;
+      updateTimerDisplay();
       render();
     }
 
@@ -45,26 +59,51 @@
         }
         table.appendChild(tr);
       }
-      document.getElementById('moves').textContent = 'タップした回数 : ' + moves;
+      document.getElementById('moves').textContent = 'タップした回数: ' + moves;
     }
 
     function toggle(i,j) {
+      if (!gameActive) return;
+      if (!timerStarted) {
+        timerStarted = true;
+        startTimer();
+      }
       moves++;
       [[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([di,dj]) => {
-        const ni = i+di, nj = j+dj;
-        if (ni>=0 && ni<2 && nj>=0 && nj<3) state[ni][nj] ^= 1;
+        const ni = i + di, nj = j + dj;
+        if (ni >= 0 && ni < 2 && nj >= 0 && nj < 3) state[ni][nj] ^= 1;
       });
       render();
-      if (state.flat().every(v=>v===0)) {
-        setTimeout(()=>alert(''+moves+' 回のタップでクリア！'),100);
+      if (state.flat().every(v => v === 0)) {
+        gameActive = false;
+        clearInterval(timerInterval);
+        setTimeout(() => alert(moves + ' 回のタップでクリア！'), 100);
       }
     }
 
-    document.getElementById('reset').addEventListener('click', init);
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        secondsRemaining--;
+        if (secondsRemaining <= 0) {
+          gameActive = false;
+          clearInterval(timerInterval);
+          document.getElementById('timer').textContent = '時間切れ';
+          alert('時間切れです');
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
 
-    // 初期化
+    function updateTimerDisplay() {
+      const m = String(Math.floor(secondsRemaining / 60)).padStart(2, '0');
+      const s = String(secondsRemaining % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = `残り時間: ${m}:${s}`;
+    }
+
+    document.getElementById('reset').addEventListener('click', init);
     init();
-  </script><br><br>
+  </script>
   <div class="back-link">
     <a href="lights_out.html">戻る</a>
   </div>
